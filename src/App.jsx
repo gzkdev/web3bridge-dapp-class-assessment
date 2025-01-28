@@ -84,8 +84,12 @@ function App() {
       >
         {/* Tabs */}
         <div className="flex items-center p-0.5 w-[240px] outline [&>button]:grow [&>button]:px-6 [&>button]:py-2 rounded divide-x">
-          <button onClick={() => setView("deposit")}>Deposit</button>
-          <button onClick={() => setView("withdraw")}>Withdraw</button>
+          <button type="button" onClick={() => setView("deposit")}>
+            Deposit
+          </button>
+          <button type="button" onClick={() => setView("withdraw")}>
+            Withdraw
+          </button>
         </div>
 
         {/* Input */}
