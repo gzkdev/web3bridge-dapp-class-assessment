@@ -50,6 +50,7 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!amount) return toast.error("Amount can't be zero");
     try {
       if (view === "deposit") {
         return await deposit();
@@ -61,7 +62,7 @@ function App() {
     } catch (e) {
       return e;
     } finally {
-      // setAmount(0);
+      setAmount(0);
       setIsPendingTx(false);
     }
   };
