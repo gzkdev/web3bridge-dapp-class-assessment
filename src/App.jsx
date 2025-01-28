@@ -9,6 +9,7 @@ const contractAddress = "0x524538eaf41e8a92a444d14e11de64a08131505a";
 function App() {
   const [view, setView] = useState("deposit"); // deposit | withdraw
   const [amount, setAmount] = useState(0);
+  const [isPendingTx, setIsPendingTx] = useState(false);
 
   const requestAccounts = async () => {
     await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -17,6 +18,7 @@ function App() {
   const deposit = async () => {
     if (typeof window.ethereum == "undefined") return;
 
+    setIsPendingTx(true);
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
@@ -32,6 +34,7 @@ function App() {
   const withdraw = async () => {
     if (typeof window.ethereum == "undefined") return;
 
+    setIsPendingTx(true);
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
@@ -49,16 +52,17 @@ function App() {
     e.preventDefault();
     try {
       if (view === "deposit") {
-        return deposit();
+        return await deposit();
       } else if (view === "withdraw") {
-        return withdraw();
+        return await withdraw();
       } else {
         throw new Error("Action can either be withdraw or deposit");
       }
     } catch (e) {
       return e;
     } finally {
-      setAmount(0);
+      // setAmount(0);
+      setIsPendingTx(false);
     }
   };
 
@@ -98,8 +102,9 @@ function App() {
         <button
           className="capitalize bg-blue-500 py-2 px-6 rounded outline-none border-none text-white font-semibold"
           type="submit"
+          disabled={isPendingTx}
         >
-          {view}
+          {isPendingTx ? "Processing..." : view}
         </button>
       </form>
     </div>
