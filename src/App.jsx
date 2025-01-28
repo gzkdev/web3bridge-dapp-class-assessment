@@ -2,6 +2,7 @@ import { useState } from "react";
 import abi from "./abi/assessment.json";
 import * as ethers from "ethers";
 import { useEffect } from "react";
+import { Toaster, toast } from "sonner";
 
 const contractAddress = "0x524538eaf41e8a92a444d14e11de64a08131505a";
 
@@ -21,10 +22,10 @@ function App() {
     const contract = new ethers.Contract(contractAddress, abi, signer);
     try {
       const tx = await contract.deposit(amount);
-      const receipt = await tx.wait();
-      console.log("successful tx", receipt);
+      await tx.wait();
+      console.log("You have deposited", amount, "succesfully");
     } catch (error) {
-      console.log("fail  transaction", error);
+      toast.error("deposit failed");
     }
   };
 
@@ -34,12 +35,13 @@ function App() {
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
+
     try {
       const tx = await contract.withdraw(amount);
-      const receipt = await tx.wait();
-      console.log("successful tx", receipt);
-    } catch (error) {
-      console.log("fail  transaction", error);
+      await tx.wait();
+      toast.success("You have withdrawn", amount, "succesfully");
+    } catch {
+      toast.error("withdrawal failed");
     }
   };
 
@@ -55,6 +57,8 @@ function App() {
       }
     } catch (e) {
       return e;
+    } finally {
+      setAmount(0);
     }
   };
 
@@ -68,6 +72,7 @@ function App() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center border">
+      <Toaster position="bottom-left" />
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 items-center"
